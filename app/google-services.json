@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "563258884618",
+    "project_id": "quizier-compose",
+    "storage_bucket": "quizier-compose.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:563258884618:android:7ddc47100f1af0b76595f3",
+        "android_client_info": {
+          "package_name": "com.example.quizier_compose_"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "563258884618-cfmipmr4lc5l7m3r2dm9cgs7618v19g6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBogkWYDrxG5pcvSBMl9aShjmUClEzgSeU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "563258884618-cfmipmr4lc5l7m3r2dm9cgs7618v19g6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
