@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -29,12 +30,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.quizier_compose_.util.Constants
+import com.example.quizier_compose_.util.Constants.MAIN_SCREEN
 import com.example.quizier_compose_.util.Constants.SIGNUP_SCREEN
+import com.example.quizier_compose_.util.Resource
+import com.example.quizier_compose_.util.UserPreferences
 
 
 @Composable
 fun LogInScreen(
-    navController: NavController
+    navController: NavController,
+    userPreferences: UserPreferences
 ) {
     val scrollState = rememberScrollState()
     Column(
@@ -90,6 +96,7 @@ fun TextFieldSection(
     val email = vm.email
     val password = vm.password
     val isChecked = vm.isChecked
+
     var passwordvisibility: Boolean by remember {
         mutableStateOf(false)
     }
@@ -205,12 +212,17 @@ fun ButtonSection(
     email: String,
     password: String,
     isChecked: Boolean,
-    navController: NavController
+    navController: NavController,
+    vm: LogInViewModel = hiltViewModel()
 ) {
+    val logInResponse = vm.logInResponse.value
+    val errorMes = vm.errorMes.value
+    val isLoading = vm.isLoading.value
+
     Column {
         Button(
             onClick = {
-
+                vm.logIn(email,password,isChecked)
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -255,5 +267,21 @@ fun ButtonSection(
                 }
         )
 
+    }
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Column {
+            if (isLoading)
+                CircularProgressIndicator()
+            if (errorMes.isNotEmpty()) {
+                Text(text = errorMes, color = Color.Red, fontSize = 21.sp)
+            }
+            if (logInResponse is Resource.Success) {
+                navController.navigate(MAIN_SCREEN) {
+                    popUpTo(Constants.LOGIN_SCREEN) {
+                        inclusive = true
+                    }
+                }
+            }
+        }
     }
 }

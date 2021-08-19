@@ -6,6 +6,6 @@ import com.example.quizier_compose_.util.Resource
 
 interface AuthRepo {
 
-    suspend fun logIn(email:String,password:String):Resource<LogInResponse>
+    suspend fun logIn(email:String,password:String,rememberMe:Boolean):Resource<LogInResponse>
     suspend fun signUp(email: String,password: String):Resource<SignUpResponse>
 }
