@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -41,6 +42,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.quizier_compose_.util.DashboardNavigation
 import com.example.quizier_compose_.util.NavigationItems
+import com.example.quizier_compose_.util.Resource
 
 
 @Composable
@@ -51,16 +53,16 @@ fun AddQuizScreen(
         ImageSection(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.35f)
+                .fillMaxHeight(0.35f), navController = navController
         )
         Spacer(modifier = Modifier.height(20.dp))
-        ScreenCenterSection(navController = navController)
     }
 }
 
 @Composable
 fun ImageSection(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navController: NavController
 ) {
     val imageUri = remember { mutableStateOf<Uri?>(null) }
     val launcher =
@@ -122,17 +124,23 @@ fun ImageSection(
                 Text(text = "Pick Quiz Cover")
             }
         }
-
     }
+    Spacer(modifier = Modifier.height(60.dp))
+    ScreenCenterSection(modifier = Modifier.offset(y = 100.dp),navController = navController, imageUri = imageUri.value)
 }
 
 @Composable
 fun ScreenCenterSection(
+    modifier: Modifier = Modifier,
     viewModel: AddQuizViewModel = hiltViewModel(),
-    navController: NavController
+    navController: NavController,
+    imageUri: Uri?,
+
 ) {
     val title = viewModel.quizTitle
-    Column(modifier = Modifier.fillMaxSize()) {
+    val response = viewModel.response.value
+    val isLoading = viewModel.isLoading
+    Column(modifier = modifier.fillMaxSize()) {
         OutlinedTextField(
             value = title.value,
             onValueChange = { newTitle ->
@@ -154,14 +162,8 @@ fun ScreenCenterSection(
         ExtendedFloatingActionButton(
             text = { Text(text = "Next", color = MaterialTheme.colors.onSurface) },
             onClick = {
-                if (title.value.isBlank()) {
-
-                } else {
-                    navController.navigate(DashboardNavigation.AddQuestions.route) {
-                        popUpTo(NavigationItems.AddQuiz.route) {
-                            inclusive = true
-                        }
-                    }
+                if (title.value.isNotBlank() && imageUri != null) {
+                    viewModel.addQuiz(title.value, imageUri)
                 }
             },
             icon = {
@@ -176,5 +178,17 @@ fun ScreenCenterSection(
                 .offset(y = 100.dp)
                 .padding(25.dp)
         )
+        Box(modifier = Modifier.fillMaxSize()){
+            if (isLoading.value){
+                CircularProgressIndicator()
+            }
+            if (response is Resource.Success){
+                navController.navigate(DashboardNavigation.AddQuestions.route){
+                    popUpTo(NavigationItems.AddQuiz.route){
+                        inclusive = true
+                    }
+                }
+            }
+        }
     }
 }
